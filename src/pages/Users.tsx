@@ -4,6 +4,7 @@ import type { User } from "../types/user";
 import DynamicForm from "../components/DynamicForm";
 import { toast } from "react-toastify";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import Header from "../components/Header";
 
 function Users() {
     const [users, setUsers] = useState<User[]>([]);
@@ -69,16 +70,14 @@ function Users() {
     };
 
     return (
-        <div className="container py-4">
-            <button className="btn btn-success mb-3" onClick={() => setShow(true)}>
-                Add User
-            </button>
 
+        <div className="container py-4">
+           <Header show={show} setShow={setShow} />
             {loading && <p>Loading users...</p>}
             {error && <p className="text-danger">{error}</p>}
             <div className="table-responsive">
-                <table className="table table-bordered">
-                    <thead>
+                <table className="table table-bordered table-hover align-middle">
+                    <thead className="table-light">
                         <tr>
                             <th>First Name</th>
                             <th>Last Name</th>
@@ -95,10 +94,10 @@ function Users() {
                                 <td>{u.lastName}</td>
                                 <td>{u.phone}</td>
                                 <td>{u.email}</td>
-                                <td>
+                                <td className="text-nowrap">
                                     <div className="d-flex flex-column flex-md-row gap-2">
                                         <button
-                                            className="btn btn-primary btn-sm d-flex align-items-center"
+                                            className="btn btn-outline-primary btn-sm d-flex align-items-center"
                                             onClick={() => {
                                                 setEditUser(u);
                                                 setShow(true);
@@ -108,7 +107,7 @@ function Users() {
                                         </button>
 
                                         <button
-                                            className="btn btn-danger btn-sm d-flex align-items-center"
+                                            className="btn btn-outline-danger btn-sm d-flex align-items-center"
                                             onClick={() => handleDelete(u.id!)}
                                         >
                                             <FaTrash className="me-1" />Delete
