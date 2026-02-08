@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { userApi } from "../services/api";
 import type { User } from "../types/user";
-import DynamicForm from "../components/DynamicForm";
 import { toast } from "react-toastify";
-import { FaEdit, FaTrash } from "react-icons/fa";
 import Header from "../components/Header";
 import UsersTable from "../components/UsersTable";
 import UserModal from "../components/UserModal";
