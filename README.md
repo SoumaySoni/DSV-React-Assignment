@@ -1,6 +1,3 @@
----
-
-````md
 # DSV React CRUD Assignment
 
 ## Overview
