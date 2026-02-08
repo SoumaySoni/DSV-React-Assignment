@@ -27,7 +27,7 @@ function DynamicForm({ onSubmit, defaultValues, title }: Props) {
 
           <input
             type={field.type}
-            className="form-control"
+            className="form-control form-control-lg"
             {...register(field.name as keyof User, {
               required: field.required ? `${field.label} is required` : false,
               pattern:
@@ -39,7 +39,7 @@ function DynamicForm({ onSubmit, defaultValues, title }: Props) {
                   : field.name === "phone"
                   ? {
                       value: /^[0-9]{10}$/,
-                      message: "Phone must be 10 digits",
+                      message: "Phone must be number and of 10 digits",
                     }
                   : undefined,
             })}

@@ -3,6 +3,7 @@ import { userApi } from "../services/api";
 import type { User } from "../types/user";
 import DynamicForm from "../components/DynamicForm";
 import { toast } from "react-toastify";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 function Users() {
     const [users, setUsers] = useState<User[]>([]);
@@ -50,6 +51,10 @@ function Users() {
     };
 
     const handleDelete = async (id: number) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+
+        if (!confirmDelete) return;
+
         try {
             setLoading(true);
             await userApi.deleteUser(id);
@@ -64,77 +69,80 @@ function Users() {
     };
 
     return (
-        <div className="container mt-4">
-            <button
-                className="btn btn-success mb-3"
-                onClick={() => setShow(true)}
-            >
+        <div className="container py-4">
+            <button className="btn btn-success mb-3" onClick={() => setShow(true)}>
                 Add User
             </button>
 
             {loading && <p>Loading users...</p>}
             {error && <p className="text-danger">{error}</p>}
-
-            <table className="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {users.map((u) => (
-                        <tr key={u.id}>
-                            <td>{u.firstName}</td>
-                            <td>{u.lastName}</td>
-                            <td>{u.phone}</td>
-                            <td>{u.email}</td>
-                            <td>
-                                <button
-                                    className="btn btn-sm btn-primary me-2"
-                                    onClick={() => {
-                                        setEditUser(u);
-                                        setShow(true);
-                                    }}
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    className="btn btn-sm btn-danger"
-                                    onClick={() => handleDelete(u.id!)}
-                                >
-                                    Delete
-                                </button>
-                            </td>
+            <div className="table-responsive">
+                <table className="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
 
+                    <tbody>
+                        {users.map((u) => (
+                            <tr key={u.id}>
+                                <td>{u.firstName}</td>
+                                <td>{u.lastName}</td>
+                                <td>{u.phone}</td>
+                                <td>{u.email}</td>
+                                <td>
+                                    <div className="d-flex flex-column flex-md-row gap-2">
+                                        <button
+                                            className="btn btn-primary btn-sm d-flex align-items-center"
+                                            onClick={() => {
+                                                setEditUser(u);
+                                                setShow(true);
+                                            }}
+                                        >
+                                            <FaEdit className="me-1" />Edit
+                                        </button>
+
+                                        <button
+                                            className="btn btn-danger btn-sm d-flex align-items-center"
+                                            onClick={() => handleDelete(u.id!)}
+                                        >
+                                            <FaTrash className="me-1" />Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
             {show && (
-                <div className="modal d-block" tabIndex={-1}>
-                    <div className="modal-dialog">
-                        <div className="modal-content p-3">
-                            <button
-                                className="btn-close ms-auto"
-                                onClick={() => {
-                                    setShow(false);
-                                    setEditUser(null);
-                                }}
-                            ></button>
+                <>
+                    <div className="modal fade show d-block" tabIndex={-1}>
+                        <div className="modal-dialog modal-dialog-centered modal-lg">
+                            <div className="modal-content p-3">
+                                <button
+                                    className="btn-close ms-auto"
+                                    onClick={() => {
+                                        setShow(false);
+                                        setEditUser(null);
+                                    }}
+                                ></button>
 
-                            <DynamicForm
-                                title={editUser ? "Edit User" : "Add User"}
-                                onSubmit={handleCreate}
-                                defaultValues={editUser || undefined}
-                            />
+                                <DynamicForm
+                                    title={editUser ? "Edit User" : "Add User"}
+                                    onSubmit={handleCreate}
+                                    defaultValues={editUser || undefined}
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div className="modal-backdrop fade show"></div>
+                </>
             )}
         </div>
     );
