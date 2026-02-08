@@ -184,4 +184,3 @@ Live Link:
 * Confirmation before delete
 * Responsive UI
 
-````
