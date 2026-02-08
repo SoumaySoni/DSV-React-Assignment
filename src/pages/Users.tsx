@@ -5,17 +5,20 @@ import DynamicForm from "../components/DynamicForm";
 import { toast } from "react-toastify";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Header from "../components/Header";
+import UsersTable from "../components/UsersTable";
+import UserModal from "../components/UserModal";
 
 function Users() {
     const [users, setUsers] = useState<User[]>([]);
     const [show, setShow] = useState(false);
     const [editUser, setEditUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
+    const [tableLoading, setTableLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     const fetchUsers = async () => {
         try {
-            setLoading(true);
+            setTableLoading(true);
             const res = await userApi.getUsers();
             setUsers(res.data);
             setError(null);
@@ -23,7 +26,7 @@ function Users() {
             setError("Failed to fetch users");
             toast.error("Something went wrong");
         } finally {
-            setLoading(false);
+            setTableLoading(false);
         }
     };
 
@@ -34,12 +37,15 @@ function Users() {
     const handleCreate = async (data: User) => {
         try {
             setLoading(true);
+
             if (editUser) {
                 await userApi.updateUser(editUser.id!, data);
+                toast.success("User updated");
             } else {
                 await userApi.createUser(data);
+                toast.success("User created");
             }
-            toast.success(editUser ? "User updated" : "User created");
+
             setShow(false);
             setEditUser(null);
             fetchUsers();
@@ -53,14 +59,13 @@ function Users() {
 
     const handleDelete = async (id: number) => {
         const confirmDelete = window.confirm("Are you sure you want to delete this user?");
-
         if (!confirmDelete) return;
 
         try {
             setLoading(true);
             await userApi.deleteUser(id);
-            fetchUsers();
             toast.success("User deleted");
+            fetchUsers();
         } catch {
             setError("Delete failed");
             toast.error("Something went wrong");
@@ -70,78 +75,56 @@ function Users() {
     };
 
     return (
+        <div className="container py-4 position-relative">
+            <Header setShow={setShow} />
 
-        <div className="container py-4">
-           <Header setShow={setShow} />
-            {loading && <p>Loading users...</p>}
             {error && <p className="text-danger">{error}</p>}
-            <div className="table-responsive">
-                <table className="table table-bordered table-hover align-middle">
-                    <thead className="table-light">
-                        <tr>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
 
-                    <tbody>
-                        {users.map((u) => (
-                            <tr key={u.id}>
-                                <td>{u.firstName}</td>
-                                <td>{u.lastName}</td>
-                                <td>{u.phone}</td>
-                                <td>{u.email}</td>
-                                <td className="text-nowrap">
-                                    <div className="d-flex flex-column flex-md-row gap-2">
-                                        <button
-                                            className="btn btn-outline-primary btn-sm d-flex align-items-center"
-                                            onClick={() => {
-                                                setEditUser(u);
-                                                setShow(true);
-                                            }}
-                                        >
-                                            <FaEdit className="me-1" />Edit
-                                        </button>
+            <div className="table-responsive position-relative">
 
-                                        <button
-                                            className="btn btn-outline-danger btn-sm d-flex align-items-center"
-                                            onClick={() => handleDelete(u.id!)}
-                                        >
-                                            <FaTrash className="me-1" />Delete
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            {show && (
-                <>
-                    <div className="modal fade show d-block" tabIndex={-1}>
-                        <div className="modal-dialog modal-dialog-centered modal-lg">
-                            <div className="modal-content p-3">
-                                <button
-                                    className="btn-close ms-auto"
-                                    onClick={() => {
-                                        setShow(false);
-                                        setEditUser(null);
-                                    }}
-                                ></button>
-
-                                <DynamicForm
-                                    title={editUser ? "Edit User" : "Add User"}
-                                    onSubmit={handleCreate}
-                                    defaultValues={editUser || undefined}
-                                />
-                            </div>
-                        </div>
+                {/* Table Loader (No CLS) */}
+                {tableLoading && (
+                    <div
+                        className="d-flex justify-content-center align-items-center"
+                        style={{ height: "300px" }}
+                    >
+                        <div className="spinner-border" />
                     </div>
-                    <div className="modal-backdrop fade show"></div>
-                </>
+                )}
+
+                {!tableLoading && (
+                    <UsersTable
+                        users={users}
+                        tableLoading={tableLoading}
+                        onEdit={(u) => {
+                            setEditUser(u);
+                            setShow(true);
+                        }}
+                        onDelete={handleDelete}
+                    />
+                )}
+            </div>
+
+            {/* Global Overlay Spinner (Create / Update / Delete) */}
+            {loading && (
+                <div
+                    className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+                    style={{ background: "rgba(255,255,255,0.6)", zIndex: 2000 }}
+                >
+                    <div className="spinner-border text-primary" style={{ width: 50, height: 50 }} />
+                </div>
+            )}
+
+            {show && (
+                <UserModal
+                    show={show}
+                    editUser={editUser}
+                    onClose={() => {
+                        setShow(false);
+                        setEditUser(null);
+                    }}
+                    onSubmit={handleCreate}
+                />
             )}
         </div>
     );

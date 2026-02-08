@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { userFormSchema } from "../config/userFormSchema";
 import type { User } from "../types/user";
+import { demoUsers } from "../data/demoUsers";
 
 interface Props {
   onSubmit: (data: User) => void;
@@ -10,12 +11,22 @@ interface Props {
 
 function DynamicForm({ onSubmit, defaultValues, title }: Props) {
   const {
+    setValue,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<User>({
     defaultValues,
   });
+
+  const fillDemoData = () => {
+    const random = demoUsers[Math.floor(Math.random() * demoUsers.length)];
+
+    setValue("firstName", random.firstName);
+    setValue("lastName", random.lastName);
+    setValue("phone", random.phone);
+    setValue("email", random.email);
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -33,15 +44,15 @@ function DynamicForm({ onSubmit, defaultValues, title }: Props) {
               pattern:
                 field.type === "email"
                   ? {
-                      value: /^\S+@\S+$/i,
-                      message: "Invalid email",
-                    }
+                    value: /^\S+@\S+$/i,
+                    message: "Invalid email",
+                  }
                   : field.name === "phone"
-                  ? {
+                    ? {
                       value: /^[0-9]{10}$/,
                       message: "Phone must be number and of 10 digits",
                     }
-                  : undefined,
+                    : undefined,
             })}
           />
 
@@ -56,6 +67,14 @@ function DynamicForm({ onSubmit, defaultValues, title }: Props) {
       <button type="submit" className="btn btn-primary">
         Save
       </button>
+      <button
+        type="button"
+        className="btn btn-outline-secondary me-2 ms-2"
+        onClick={fillDemoData}
+      >
+        Demo Fill
+      </button>
+
     </form>
   );
 }
