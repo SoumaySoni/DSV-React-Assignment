@@ -1,12 +1,13 @@
-import './App.css'
+import Users from "./pages/Users";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
-    <div className="container mt-4">
-      <h2 className="text-center">DSV React CRUD Assignment</h2>
-    </div>
+  <>
+    <Users />
+    <ToastContainer position="top-right" />
+  </>
   );
 }
 
 export default App;
-

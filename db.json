@@ -1,3 +1,11 @@
 {
-  "users": []
+  "users": [
+    {
+      "id": "37f9",
+      "firstName": "Soujay",
+      "lastName": "Soni",
+      "phone": "8299421734",
+      "email": "soumaysoni1687@gmail.com"
+    }
+  ]
 }
