@@ -1,6 +1,3 @@
-Perfect — here it is **clean, ready-to-paste in actual `.md` (Markdown) format**.
-Just copy everything below and paste into your `README.md`.
-
 ---
 
 ````md
