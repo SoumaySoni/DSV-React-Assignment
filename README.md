@@ -185,23 +185,3 @@ Live Link:
 * Responsive UI
 
 ````
-
----
-
-### After this
-
-1. Paste into `README.md`
-2. Replace:
-
-- `<your-repo-link>`
-- `<your-vercel-link>`
-
-3. Push:
-
-```bash
-git add .
-git commit -m "Added professional README"
-git push
-````
-
----
