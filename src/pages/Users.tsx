@@ -72,7 +72,7 @@ function Users() {
     return (
 
         <div className="container py-4">
-           <Header show={show} setShow={setShow} />
+           <Header setShow={setShow} />
             {loading && <p>Loading users...</p>}
             {error && <p className="text-danger">{error}</p>}
             <div className="table-responsive">
